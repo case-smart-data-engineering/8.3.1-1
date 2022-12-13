@@ -235,40 +235,7 @@ class TransE:
                 grad_neg = 2 * (h_corrupt + relation - t_corrupt)
 
                 # 使用L1范数进行梯度更新，L1范数的梯度向量中每个元素为-1或1
-                if self.L1:
-                    for i in range(len(grad_pos)):
-                        if (grad_pos[i] > 0):
-                            grad_pos[i] = 1
-                        else:
-                            grad_pos[i] = -1
-
-                    for i in range(len(grad_neg)):
-                        if (grad_neg[i] > 0):
-                            grad_neg[i] = 1
-                        else:
-                            grad_neg[i] = -1
-
-                # head系数为正，减梯度；tail系数为负，加梯度
-                h_correct_update -= self.learning_rate * grad_pos
-                t_correct_update -= (-1) * self.learning_rate * grad_pos
-
-                
-                # 两个三元组只有一个entity不同（不同时替换头尾实体），所以在每步更新时重叠实体需要更新两次（和更新relation一样）。
-                # 例如正确的三元组是（1，2，3），错误的是（1，2，4），那么1和2都需要更新两次，针对正确的三元组更新一次，针对错误的三元组更新一次
-                # 若替换的是尾实体，则头实体更新两次
-                if triple[0] == corrupted_triple[0]:  
-                    # corrupt项整体为负，因此符号与correct相反
-                    h_correct_update -= (-1) * self.learning_rate * grad_neg
-                    t_corrupt_update -= self.learning_rate * grad_neg
-                # 若替换的是头实体，则尾实体更新两次
-                elif triple[1] == corrupted_triple[1]:  
-                    h_corrupt_update -= (-1) * self.learning_rate * grad_neg
-                    t_correct_update -= self.learning_rate * grad_neg
-
-                # relation更新两次
-                relation_update -= self.learning_rate*grad_pos
-                relation_update -= (-1)*self.learning_rate*grad_neg
-
+                raise NotImplementedError
 
         # batch norm
         for i in copy_entity.keys():
