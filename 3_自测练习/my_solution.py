@@ -218,24 +218,7 @@ class TransE:
             h_corrupt = self.entity[corrupted_triple[0]]
             t_corrupt = self.entity[corrupted_triple[1]]
             # 根据L1范数或L2范数计算得分函数，计算三元组的距离
-            if self.L1:
-                dist_correct = distanceL1(h_correct, relation, t_correct)
-                dist_corrupt = distanceL1(h_corrupt, relation, t_corrupt)
-            else:
-                dist_correct = distanceL2(h_correct, relation, t_correct)
-                dist_corrupt = distanceL2(h_corrupt, relation, t_corrupt)
-
-            # 计算损失
-            err = self.hinge_loss(dist_correct, dist_corrupt) 
-
-            if err > 0:
-                self.loss += err
-                # 计算L2范数的梯度
-                grad_pos = 2 * (h_correct + relation - t_correct) 
-                grad_neg = 2 * (h_corrupt + relation - t_corrupt)
-
-                # 使用L1范数进行梯度更新，L1范数的梯度向量中每个元素为-1或1
-                raise NotImplementedError
+            raise NotImplementedError
 
         # batch norm
         for i in copy_entity.keys():
