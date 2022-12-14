@@ -202,57 +202,8 @@ class TransE:
             h_corrupt = self.entity[corrupted_triple[0]]
             t_corrupt = self.entity[corrupted_triple[1]]
             # 根据评分函数计算得分，求得损失后更新梯度。(请补全更新函数缺失的部分)
-             # 根据L1评分函数或L2评分函数计算评分，计算三元组的得分
-            if self.L1:
-                dist_correct = distanceL1(h_correct, relation, t_correct)
-                dist_corrupt = distanceL1(h_corrupt, relation, t_corrupt)
-            else:
-                dist_correct = distanceL2(h_correct, relation, t_correct)
-                dist_corrupt = distanceL2(h_corrupt, relation, t_corrupt)
+            raise NotImplementedError
 
-            # 计算损失
-            err = self.hinge_loss(dist_correct, dist_corrupt) 
-
-            if err > 0:
-                self.loss += err
-                # 计算L2评分函数的梯度
-                grad_pos = 2 * (h_correct + relation - t_correct) 
-                grad_neg = 2 * (h_corrupt + relation - t_corrupt)
-
-                # 如果使用L1评分函数进行梯度更新，L1范数的梯度向量中每个元素为-1或1
-                if self.L1:
-                    for i in range(len(grad_pos)):
-                        if (grad_pos[i] > 0):
-                            grad_pos[i] = 1
-                        else:
-                            grad_pos[i] = -1
-
-                    for i in range(len(grad_neg)):
-                        if (grad_neg[i] > 0):
-                            grad_neg[i] = 1
-                        else:
-                            grad_neg[i] = -1
-
-                # head系数为正，减梯度；tail系数为负，加梯度
-                h_correct_update -= self.learning_rate * grad_pos
-                t_correct_update -= (-1) * self.learning_rate * grad_pos
-
-                
-                # 两个三元组只有一个entity不同（不同时替换头尾实体），所以在每步更新时重叠实体需要更新两次（和更新relation一样）。
-                # 例如正确的三元组是（1，2，3），错误的是（1，2，4），那么1和2都需要更新两次，针对正确的三元组更新一次，针对错误的三元组更新一次
-                # 若替换的是尾实体，则头实体更新两次
-                if triple[0] == corrupted_triple[0]:  
-                    # corrupt项整体为负，因此符号与correct相反
-                    h_correct_update -= (-1) * self.learning_rate * grad_neg
-                    t_corrupt_update -= self.learning_rate * grad_neg
-                # 若替换的是头实体，则尾实体更新两次
-                elif triple[1] == corrupted_triple[1]:  
-                    h_corrupt_update -= (-1) * self.learning_rate * grad_neg
-                    t_correct_update -= self.learning_rate * grad_neg
-
-                # relation更新两次
-                relation_update -= self.learning_rate*grad_pos
-                relation_update -= (-1)*self.learning_rate*grad_neg
 
         # batch norm
         for i in copy_entity.keys():
@@ -273,12 +224,4 @@ if __name__=='__main__':
     pass
     # 训练
     pass
-    # 加载数据集
-    file1 = "test_data//" 
-    entity_set, relation_set, triple_list = data_loader(file1)
-    print("load file...")
-    print("Complete load. entity : %d , relation : %d , triple : %d" % (len(entity_set),len(relation_set),len(triple_list)))
-    # 训练
-    transE = TransE(entity_set, relation_set, triple_list,embedding_dim=50, learning_rate=0.01, margin=1,L1=True)
-    transE.emb_initialize()
-    transE.train(epochs=100)
+   
