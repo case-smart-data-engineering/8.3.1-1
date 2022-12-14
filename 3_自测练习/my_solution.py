@@ -1,10 +1,9 @@
 import codecs # 对文件读写
 import random 
 import math 
-import numpy as np # 用来处理数组和矩阵
+import numpy as np 
 import copy 
 import time 
-import torch
 
 entity2id = {} 
 relation2id = {}
@@ -12,7 +11,7 @@ relation2id = {}
 # 加载数据集
 # 返回实体集合，关系集合，三元组列表。（其中实体集合、关系集合和三元组列表的元素都是实体和关系对应的id）
 def data_loader(file): 
-    file1 = file + "train.txt" # 生成训练集路径
+    file1 = file + "train.txt" 
     file2 = file + "entity2id.txt"
     file3 = file + "relation2id.txt"
 
@@ -62,11 +61,11 @@ def data_loader(file):
             relation_set.add(r_)
 
     return entity_set, relation_set, triple_list 
-
+# L2评分函数
 def distanceL2(h,r,t): 
     #为方便求梯度，去掉sqrt
     return np.sum(np.square(h + r - t)) 
-
+# L1评分函数
 def distanceL1(h,r,t): 
     return np.sum(np.fabs(h+r-t))
 
@@ -119,8 +118,8 @@ class TransE:
         batch_size = len(self.triple_list) // nbatches 
         print("batch size: ", batch_size)
         for epoch in range(epochs): 
-            start = time.time() # 计算每轮训练开始时间
-            self.loss = 0 #
+            start = time.time() 
+            self.loss = 0 
 
             for k in range(nbatches): 
                 # 从triple_list中随机采样batch_size数量的三元组组成Sbatch，Sbatch类型为列表，元素类型为[h_,r_,t_]
@@ -137,27 +136,12 @@ class TransE:
                 # 调用update_triple_embedding函数，计算这一个batch的损失值，根据梯度下降法更新向量，然后再进行下一个batch的训练
                 self.update_embeddings(Tbatch) 
 
-            # 计算本轮结束时间
             end = time.time() 
             # 记录该轮的信息
             print("epoch: ", epoch , "cost time: %s"%(round((end - start),3))) 
             print("loss: ", self.loss)
 
-            #保存临时结果
-            if epoch % 20 == 0: 
-                with codecs.open("entity_temp", "w") as f_e:
-                    for e in self.entity.keys(): # 遍历实体字典的id,字典结构：{实体id：实体向量}
-                        # 写入实体id到文件中
-                        f_e.write(e + "\t") 
-                        # 把实体向量列表化再拼接成字符串后写入文件
-                        f_e.write(str(list(self.entity[e]))) 
-                        # 本轮循环结束后，写入的一行内容为：id \t 实体向量
-                        f_e.write("\n") 
-                with codecs.open("relation_temp", "w") as f_r:
-                    for r in self.relation.keys():
-                        f_r.write(r + "\t")
-                        f_r.write(str(list(self.relation[r])))
-                        f_r.write("\n")
+            
         # 所有的40个batch训练完成后，将训练好的实体向量、关系向量输出到目录下
         print("写入文件...")
         with codecs.open("entity_50dim_batch40", "w") as f1:
@@ -217,8 +201,58 @@ class TransE:
 
             h_corrupt = self.entity[corrupted_triple[0]]
             t_corrupt = self.entity[corrupted_triple[1]]
-            # 根据L1范数或L2范数计算得分函数，计算三元组的距离
-            raise NotImplementedError
+            # 根据评分函数计算得分，求得损失后更新梯度。(请补全更新函数缺失的部分)
+             # 根据L1评分函数或L2评分函数计算评分，计算三元组的得分
+            if self.L1:
+                dist_correct = distanceL1(h_correct, relation, t_correct)
+                dist_corrupt = distanceL1(h_corrupt, relation, t_corrupt)
+            else:
+                dist_correct = distanceL2(h_correct, relation, t_correct)
+                dist_corrupt = distanceL2(h_corrupt, relation, t_corrupt)
+
+            # 计算损失
+            err = self.hinge_loss(dist_correct, dist_corrupt) 
+
+            if err > 0:
+                self.loss += err
+                # 计算L2评分函数的梯度
+                grad_pos = 2 * (h_correct + relation - t_correct) 
+                grad_neg = 2 * (h_corrupt + relation - t_corrupt)
+
+                # 如果使用L1评分函数进行梯度更新，L1范数的梯度向量中每个元素为-1或1
+                if self.L1:
+                    for i in range(len(grad_pos)):
+                        if (grad_pos[i] > 0):
+                            grad_pos[i] = 1
+                        else:
+                            grad_pos[i] = -1
+
+                    for i in range(len(grad_neg)):
+                        if (grad_neg[i] > 0):
+                            grad_neg[i] = 1
+                        else:
+                            grad_neg[i] = -1
+
+                # head系数为正，减梯度；tail系数为负，加梯度
+                h_correct_update -= self.learning_rate * grad_pos
+                t_correct_update -= (-1) * self.learning_rate * grad_pos
+
+                
+                # 两个三元组只有一个entity不同（不同时替换头尾实体），所以在每步更新时重叠实体需要更新两次（和更新relation一样）。
+                # 例如正确的三元组是（1，2，3），错误的是（1，2，4），那么1和2都需要更新两次，针对正确的三元组更新一次，针对错误的三元组更新一次
+                # 若替换的是尾实体，则头实体更新两次
+                if triple[0] == corrupted_triple[0]:  
+                    # corrupt项整体为负，因此符号与correct相反
+                    h_correct_update -= (-1) * self.learning_rate * grad_neg
+                    t_corrupt_update -= self.learning_rate * grad_neg
+                # 若替换的是头实体，则尾实体更新两次
+                elif triple[1] == corrupted_triple[1]:  
+                    h_corrupt_update -= (-1) * self.learning_rate * grad_neg
+                    t_correct_update -= self.learning_rate * grad_neg
+
+                # relation更新两次
+                relation_update -= self.learning_rate*grad_pos
+                relation_update -= (-1)*self.learning_rate*grad_neg
 
         # batch norm
         for i in copy_entity.keys():
@@ -236,7 +270,11 @@ class TransE:
 
 if __name__=='__main__':
     # 加载数据集
-    file1 = "FB15k-diy//" 
+    pass
+    # 训练
+    pass
+    # 加载数据集
+    file1 = "test_data//" 
     entity_set, relation_set, triple_list = data_loader(file1)
     print("load file...")
     print("Complete load. entity : %d , relation : %d , triple : %d" % (len(entity_set),len(relation_set),len(triple_list)))

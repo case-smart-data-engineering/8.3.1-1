@@ -2,7 +2,7 @@ import numpy as np
 import codecs # 对文件读写
 import operator # operator模块定义了与内置运算相对应的函数，如算术操作、比较操作以及和标准API相对应的操作。
 import json 
-from solution import data_loader,entity2id,relation2id
+from my_solution import data_loader,entity2id,relation2id
 
 # # 加载数据集,生成实体字典，关系字典，测试三元组
 def dataloader(entity_file,relation_file,test_file): 
@@ -47,7 +47,7 @@ def dataloader(entity_file,relation_file,test_file):
 
     return entity_dict,relation_dict,test_triple
 
-# 定义得分函数
+# 定义评分函数
 def distance(h,r,t): 
     # np.array()的作用就是把列表转化为n维数组(向量)
     h = np.array(h) 
@@ -55,7 +55,6 @@ def distance(h,r,t):
     t = np.array(t)
     # 计算差值向量
     s=h+r-t 
-    # # 返回s的得分
     return np.linalg.norm(s) 
 
 # 定义测试模型
@@ -66,9 +65,8 @@ class Test:
         self.relation_dict = relation_dict
         self.test_triple = test_triple
         self.train_triple = train_triple
-        # 是否符合条件
         self.isFit = isFit 
-        # 排名中正确预测排在前10位所占的比例（命中前10的次数/总查询次数，越大越好）
+        # 排名中正确预测排在前10位的概率（命中前10的次数/总查询次数，越大越好）
         self.hits10 = 0 
         # 排名中的正确预测所在的排名的平均值（正确结果排名之和/总查询次数，越小越好）
         self.mean_rank = 0 
@@ -79,9 +77,7 @@ class Test:
         self.relation_mean_rank = 0 
     # 定义实体排名函数
     def rank(self):
-        # 正确预测出现在前10的次数
         hits = 0 
-        # 正确预测的排名数
         rank_sum = 0 
         step = 1
 
@@ -99,7 +95,7 @@ class Test:
                         h_emb = self.entity_dict[corrupted_head[0]] 
                         r_emb = self.relation_dict[corrupted_head[2]]
                         t_emb = self.entity_dict[corrupted_head[1]]
-                        # 计算评分，并生成头实体排名字典的元素
+                        # 计算得分，并生成头实体排名字典的元素
                         rank_head_dict[tuple(corrupted_head)]=distance(h_emb,r_emb,t_emb) 
                 
                 else:
@@ -145,7 +141,7 @@ class Test:
                     rank_sum = rank_sum + i + 1
                     break
             step += 1 
-            if step % 500 == 0: 
+            if step % 100 == 0: 
                 print("step ", step, " ,hits ",hits," ,rank_sum ",rank_sum)
                 print()
         
@@ -198,11 +194,11 @@ class Test:
 
 if __name__ == '__main__':
     # 加载测试数据集
-    _, _, train_triple = data_loader("FB15k-diy//") 
+    _, _, train_triple = data_loader("test_data//") 
     # 生成实体字典，关系字典，测试三元组
     entity_dict, relation_dict, test_triple = \
         dataloader("entity_50dim_batch40","relation50dim_batch40",
-                   "FB15k-diy//test.txt")
+                   "test_data//test.txt")
 
     # 初始化测试实例
     test = Test(entity_dict,relation_dict,test_triple,train_triple,isFit=False)

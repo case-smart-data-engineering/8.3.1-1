@@ -2,6 +2,20 @@
 
 ## 使用指南
 
-1. 按 `CTRL + P` 打开命令行面板，输入 "terminal: Create New Terminal" 打开一个命令行终端.
+1. 首先需要补充完整my_solution文件内缺失的部分
+2. 算法示例所用的数据是FB15k数据集的一个子集
 2. 在命令行里输入 `cd 3_自测练习` 并按 `ENTER` 进"自测练习"目录。
-3. 在命令行里输入 `python3 -m pytest test_case.py` 按 `ENTER` 运行示例程序。
+3. 在命令行里输入 `python3  test_case.py` 按 `ENTER` 运行示例程序。
+
+## 运行结果
+正确运行代码后，会生成文件result文件，里面保存实体和关系的hits10值和meanrank值
+
+## 备注
+如果是在命令行上运行代码，需要按照使用指南的顺序进入**正确的目录**才可运行成功
+
+
+
+
+
+
+
