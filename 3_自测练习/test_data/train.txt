@@ -1351,4 +1351,4 @@
 /m/0978r	/m/0282x	/location/location/people_born_here	
 /m/01mjq	/m/0kbws	/olympics/olympic_participating_country/athletes./olympics/olympic_athlete_affiliation/olympics	
 /m/0168t	/m/09nqf	/location/statistical_region/gdp_nominal./measurement_unit/dated_money_value/currency	
-/m/0kbws	/m/088q4	/olympics	/olympic_games/athletes./olympics/olympic_athlete_affiliation/country
+/m/0kbws	/m/088q4	/olympics/olympic_games/athletes./olympics/olympic_athlete_affiliation/country
