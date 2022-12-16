@@ -144,13 +144,13 @@ class TransE:
             
         # 所有的40个batch训练完成后，将训练好的实体向量、关系向量输出到目录下
         print("写入文件...")
-        with codecs.open("entity_50dim_batch40", "w") as f1:
+        with codecs.open("test_result//entity_50dim_batch40", "w") as f1:
             for e in self.entity.keys():
                 f1.write(e + "\t")
                 f1.write(str(list(self.entity[e])))
                 f1.write("\n")
 
-        with codecs.open("relation50dim_batch40", "w") as f2:
+        with codecs.open("test_result//relation_50dim_batch40", "w") as f2:
             for r in self.relation.keys():
                 f2.write(r + "\t")
                 f2.write(str(list(self.relation[r])))
@@ -224,4 +224,5 @@ if __name__=='__main__':
     pass
     # 训练
     pass
+
    

@@ -6,11 +6,12 @@
 2. 算法示例所用的数据是FB15k数据集的一个子集，包含实体id集，关系id集和训练集和测试集，
    保存在txt文档中，元素格式分别为'实体\t对应id'，'关系\t对应id'，'头实体\t尾实体\t关系'，'头实体\t尾实体\t关系'。
 3. 在命令行里输入 `cd 3_自测练习` 并按 `ENTER` 进"自测练习"目录。
-4. 在命令行里输入 `python3  my_solution.py` 按 `ENTER` 运行示例程序。
-3. 示例程序运行完毕后，在命令行里输入 `python3  test_case.py` 按 `ENTER` 运行测试程序。
+4. 在命令行里输入 `python3  my_solution.py` 按 `ENTER` 运行测试程序，运行完毕后会在test_result目录下生成
+   entity文件和relation文件，里面保存训练好的实体和关系向量。
+5. 训练程序运行完毕后，在命令行里输入 `python3  test_case.py` 按 `ENTER` 运行测试程序。
 
 ## 运行结果
-测试程序正确运行代码后，会生成文件result文件，里面保存实体和关系的hits10值和meanrank值。
+测试程序正确运行代码后，会在test_result目录下生成文件outcome，里面保存hits10值和meanrank值。
 
 ## 备注
 如果是在命令行上运行代码，需要按照使用指南的顺序进入**正确的目录**才可运行成功。

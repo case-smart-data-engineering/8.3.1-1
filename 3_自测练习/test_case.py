@@ -197,7 +197,7 @@ if __name__ == '__main__':
     _, _, train_triple = data_loader("test_data//") 
     # 生成实体字典，关系字典，测试三元组
     entity_dict, relation_dict, test_triple = \
-        dataloader("entity_50dim_batch40","relation50dim_batch40",
+        dataloader("test_result//entity_50dim_batch40","test_result//relation_50dim_batch40",
                    "test_data//test.txt")
 
     # 初始化测试实例
@@ -212,7 +212,7 @@ if __name__ == '__main__':
     print("relation hits@10: ", test.relation_hits10)
     print("relation meanrank: ", test.relation_mean_rank)
     # 保存结果
-    f = open("result.txt",'w')
+    f = open("test_result//outcome.txt",'w')
     f.write("entity hits@10: "+ str(test.hits10) + '\n')
     f.write("entity meanrank: " + str(test.mean_rank) + '\n')
     f.write("relation hits@10: " + str(test.relation_hits10) + '\n')
