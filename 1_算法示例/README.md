@@ -16,7 +16,7 @@
 5. 在命令行里输入 `python solution.py` 按 `ENTER` 运行示例程序。
 
 ## 运行结果
-   正确运行代码后，会在result目录下生成文件entity_50dim_batch40和文件relation_50dim_batch40，里面存放训练好的实体向量和关系向量。
+   正确运行代码后，会在example_result目录下生成文件entity_50dim_batch40和文件relation_50dim_batch40，里面存放训练好的实体向量和关系向量。
 
 ## 备注
    如果是在命令行上运行代码，需要按照使用指南的顺序进入**正确的目录**才可运行成功。
