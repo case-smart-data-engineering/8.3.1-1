@@ -144,7 +144,7 @@ class TransE:
             
         # 所有的40个batch训练完成后，将训练好的实体向量、关系向量输出到目录下
         print("写入文件...")
-        with codecs.open("result//entity_50dim_batch40", "w") as f1:
+        with codecs.open("example_result//entity_50dim_batch40", "w") as f1:
             for e in self.entity.keys():
                 f1.write(e + "\t")
                 f1.write(str(list(self.entity[e])))
