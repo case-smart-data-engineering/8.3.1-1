@@ -218,6 +218,7 @@ class TransE:
                 # relation更新两次
 
             raise NotImplementedError
+ 
 
 
         # batch norm

@@ -270,11 +270,11 @@ class TransE:
 
 if __name__=='__main__':
     # 加载数据集
-    file1 = "train_data//" 
+    file1 = "data//" 
     entity_set, relation_set, triple_list = data_loader(file1)
     print("load file...")
     print("Complete load. entity : %d , relation : %d , triple : %d" % (len(entity_set),len(relation_set),len(triple_list)))
     # 训练
     transE = TransE(entity_set, relation_set, triple_list,embedding_dim=50, learning_rate=0.01, margin=1,L1=True)
     transE.emb_initialize()
-    transE.train(epochs=100)
+    transE.train(epochs=20)
