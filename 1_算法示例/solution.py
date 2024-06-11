@@ -167,7 +167,8 @@ class TransE:
             rand_head = triple[0]
             while rand_head == triple[0]:
                 # 随机采样一个新的头实体
-                rand_head = random.sample(self.entity.keys(),1)[0] 
+                # rand_head = random.sample(self.entity.keys(),1)[0] 
+                rand_head = random.sample(sorted(self.entity.keys()), 1)[0] 
             corrupted_triple[0]=rand_head
 
         else:
@@ -175,7 +176,8 @@ class TransE:
             rand_tail = triple[1]
             while rand_tail == triple[1]:
                 # 随机采样一个新的尾实体
-                rand_tail = random.sample(self.entity.keys(), 1)[0] 
+                # rand_tail = random.sample(self.entity.keys(), 1)[0] 
+                rand_tail = random.sample(sorted(self.entity.keys()), 1)[0] 
             corrupted_triple[1] = rand_tail
         return corrupted_triple 
 
